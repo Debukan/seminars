@@ -1,10 +1,18 @@
-export function Header() {
+interface HeaderProps {
+    totalCount: number
+    totalPrice: number
+    onClear: () => void
+}
+
+export function Header({totalCount, totalPrice, onClear}: HeaderProps) {
     return (
         <header className="header">
             <h1>Магазин</h1>
             <div className="cart-summary">
-                <span>Корзина: 0 шт. · 0 ₽</span>
-                <button type="button" disabled>Очистить</button>
+                <span role="status">Корзина: {totalCount} шт. · {totalPrice} ₽</span>
+                <button type="button" onClick={onClear} disabled={totalCount === 0}>
+                    Очистить
+                </button>
             </div>
         </header>
     )
