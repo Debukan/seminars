@@ -1,0 +1,20 @@
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    color: #222;
+    background: white;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+input, button {
+    font: inherit;
+}
+
+button {
+    padding: 6px 10px;
+    border: 1px solid #aaa;
+    cursor: pointer;
+}

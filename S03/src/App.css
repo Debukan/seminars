@@ -1,0 +1,103 @@
+.app {
+    max-width: 1000px;
+    margin: 20px auto;
+    padding: 0 16px;
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 12px;
+    margin-bottom: 16px;
+    background: #eee;
+}
+
+.header h1 {
+    margin: 0;
+    font-size: 24px;
+}
+
+.cart-summary, .search-panel, .stock-filter, .card-actions {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.search-panel input[type='search'] {
+    width: 300px;
+    max-width: 100%;
+    padding: 6px;
+}
+
+.results-bar {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin: 16px 0;
+}
+
+.results-bar p {
+    margin: 0;
+}
+
+.product-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+}
+
+.product-card {
+    border: 1px solid #aaa;
+    padding: 12px;
+}
+
+.product-card h2 {
+    font-size: 18px;
+    margin: 0 0 8px;
+}
+
+.product-card p {
+    margin: 8px 0;
+}
+
+.available {
+    color: green;
+}
+
+.unavailable {
+    color: #666;
+}
+
+.button-primary {
+    background: #2b4c9a;
+    color: white;
+    border: 1px solid #2b4c9a;
+}
+
+button:disabled {
+    background: #eee;
+    color: #777;
+    border-color: #aaa;
+    cursor: default;
+}
+
+.empty-state, .error-state {
+    border: 1px solid #aaa;
+    padding: 16px;
+}
+
+@media (max-width: 700px) {
+    .product-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 450px) {
+    .product-grid {
+        grid-template-columns: 1fr;
+    }
+}
