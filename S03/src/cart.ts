@@ -68,3 +68,10 @@ export function getTotalPrice(items: CartItem[]): number {
     return total
 }
 
+export function getQuantities(items: CartItem[]): number[] {
+    const quantities: number[] = []
+    for (const item of items) {
+        quantities[item.id] = item.qty
+    }
+    return quantities
+}
