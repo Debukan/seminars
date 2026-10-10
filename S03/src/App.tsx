@@ -1,34 +1,44 @@
-import {useCallback, useMemo, useReducer, useState} from 'react'
+import {useMemo, useState, useTransition} from 'react'
+import {ErrorBoundary} from 'react-error-boundary'
 import {filterProducts} from './data'
 import {Header} from './components/Header'
 import {SearchBar} from './components/SearchBar'
 import {ProductList} from './components/ProductList'
-import {cartReducer, getQuantities, getTotalCount, getTotalPrice, initialCart} from './cart'
-import type {Product} from './data'
+import {ListErrorFallback} from './components/ListErrorFallback'
+import {useCart} from './hooks/useCart'
+import {CartContext} from './context/cartContext'
 import './App.css'
 
 function App() {
     const [query, setQuery] = useState('')
+    const [filter, setFilter] = useState('')
     const [onlyInStock, setOnlyInStock] = useState(false)
-    const visible = useMemo(() => filterProducts(query, onlyInStock), [query, onlyInStock])
+    const [isPending, startTransition] = useTransition()
+    const cart = useCart()
+    const visible = useMemo(() => filterProducts(filter, onlyInStock), [filter, onlyInStock])
 
-    const [cart, dispatch] = useReducer(cartReducer, initialCart)
-    const totalCount = useMemo(() => getTotalCount(cart.items), [cart.items])
-    const totalPrice = useMemo(() => getTotalPrice(cart.items), [cart.items])
-    const add = useCallback((product: Product) => dispatch({type: 'add', product}), [])
-    const remove = useCallback((id: number) => dispatch({type: 'remove', id}), [])
-    const clear = useCallback(() => dispatch({type: 'clear'}), [])
-    const qtyById = useMemo(() => getQuantities(cart.items), [cart.items])
+    function handleSearch(value: string) {
+        setQuery(value)
+        startTransition(() => setFilter(value))
+    }
 
     return (
-        <div className="app" id="top">
-            <Header totalCount={totalCount} totalPrice={totalPrice} onClear={clear}/>
-            <main>
-                <SearchBar query={query} onlyInStock={onlyInStock} onSearch={setQuery} onStockChange={setOnlyInStock}/>
-                <div className="results-bar"><p>Найдено: <strong>{visible.length}</strong></p></div>
-                <ProductList products={visible} qtyById={qtyById} onAdd={add} onRemove={remove}/>
-            </main>
-        </div>
+        <CartContext.Provider value={cart}>
+            <div className="app" id="top">
+                <Header/>
+                <main>
+                    <SearchBar query={query} onlyInStock={onlyInStock} onSearch={handleSearch}
+                               onStockChange={setOnlyInStock}/>
+                    <div className="results-bar"><p>Найдено: <strong>{visible.length}</strong></p><span
+                        role="status">{isPending && 'Обновляем список…'}</span></div>
+                    <div aria-busy={isPending}>
+                        <ErrorBoundary FallbackComponent={ListErrorFallback}>
+                            <ProductList products={visible}/>
+                        </ErrorBoundary>
+                    </div>
+                </main>
+            </div>
+        </CartContext.Provider>
     )
 }
 

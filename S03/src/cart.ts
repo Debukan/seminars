@@ -9,14 +9,16 @@ export interface CartItem {
 
 export interface CartState {
     items: CartItem[]
+    isRestored: boolean
 }
 
 export type CartAction =
     | { type: 'add'; product: Product }
     | { type: 'remove'; id: number }
     | { type: 'clear' }
+    | { type: 'restore'; items: CartItem[] }
 
-export const initialCart: CartState = {items: []}
+export const initialCart: CartState = {items: [], isRestored: false}
 
 export function cartReducer(state: CartState, action: CartAction): CartState {
     switch (action.type) {
@@ -32,7 +34,7 @@ export function cartReducer(state: CartState, action: CartAction): CartState {
                     }
                     return item
                 })
-                return {items}
+                return {...state, items}
             }
 
             const newItem: CartItem = {
@@ -41,12 +43,14 @@ export function cartReducer(state: CartState, action: CartAction): CartState {
                 price: action.product.price,
                 qty: 1,
             }
-            return {items: [...state.items, newItem]}
+            return {...state, items: [...state.items, newItem]}
         }
         case 'remove':
-            return {items: state.items.filter((item) => item.id !== action.id)}
+            return {...state, items: state.items.filter((item) => item.id !== action.id)}
         case 'clear':
-            return {items: []}
+            return {...state, items: []}
+        case 'restore':
+            return {items: action.items, isRestored: true}
         default:
             return state
     }
@@ -74,4 +78,14 @@ export function getQuantities(items: CartItem[]): number[] {
         quantities[item.id] = item.qty
     }
     return quantities
+}
+
+export interface CartValue {
+    items: CartItem[]
+    totalCount: number
+    totalPrice: number
+    qtyById: number[]
+    add: (product: Product) => void
+    remove: (id: number) => void
+    clear: () => void
 }
